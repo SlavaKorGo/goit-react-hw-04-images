@@ -1,24 +1,23 @@
-import React from 'react';
+import React, {useState} from 'react';
 import { Modal } from 'components/Modal/Modal';
 import css from './ImageGalleryItem.module.css'
 
-export class ImageGalleryItem extends React.Component {
-  state = {
-    showModal: false
-  };
+export function ImageGalleryItem ({ webformatURL, tags, largeImageURL}) {
+ 
+  const [showModal, setShowModal] = useState(false)
    
-  toggleModal = () => {
-    this.setState(prevState => ({showModal: !prevState.showModal}));
+  const onOpenModal = () => {
+    setShowModal(true);
   };
-  
-  render() {
-    const { webformatURL, tags, largeImageURL} = this.props;
-    const {showModal} = this.state;
 
+  const onCloseModal = () => {
+    setShowModal(false);
+  };
+ 
     return(
       <>
             <li className={css.ImageGalleryItem} 
-            onClick={this.toggleModal}>
+            onClick={onOpenModal}>
               <img className={css.ImageGalleryItemImage}
               src={webformatURL}
               alt={tags} 
@@ -30,8 +29,9 @@ export class ImageGalleryItem extends React.Component {
               <Modal 
               url={largeImageURL}
               alt={tags} 
-              onClose={this.toggleModal}/>}
+              onClose={onCloseModal}/>}
       </>
           )
-  }
+  
 }; 
+

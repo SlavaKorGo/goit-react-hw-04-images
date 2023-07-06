@@ -1,4 +1,4 @@
-import React from 'react';
+import { useEffect, useState } from 'react'
 import { ToastContainer } from 'react-toastify';
 import {Searchbar} from './Searchbar/Searchbar';
 import { Loader } from './Loader/Loader';
@@ -8,57 +8,57 @@ import {Button} from './Button/Button';
 import { FetchGallery } from './servise/gallery-api';
 
 
- export class App extends React.Component {
-  state = {
-    searchText: '',
-    page: 1,
-    perPage: 12,
-    totalPages: 0,
-    images: [],
-    error: null,
-    isLoading: false,
-  };
+ export function App () {
+ 
+  const [searchText, setSearchText] = useState('');
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(0);
+  const [ images, setImages] = useState([]);
+  const [ error, setError] = useState(null);
+  const [  isLoading, setIsLoading] = useState(false);
 
-  async componentDidUpdate(_, prevState) {
-    const { searchText, page, perPage } = this.state;
-    if (page !== prevState.page || searchText !== prevState.searchText) {
-      this.setState({ isLoading: true });
+  useEffect(() => {
+    if (!searchText) {
+      return;
+    }
+    const fetchData = async () => {
+      setIsLoading(true);
       try {
-        const response = await FetchGallery({ searchText, page, perPage });
+        const response = await FetchGallery({ searchText, page });
         if (response.hits.length === 0) {
           throw new Error(`Sorry, no photo from ${searchText}!`);
         }
-        this.setState(prevState => ({
-          images: [...prevState.images, ...response.hits],
-          totalPages: Math.ceil(response.totalHits / perPage),
-          error: null,
-        }));
+        setImages(prevImages => [...prevImages, ...response.hits]);
+        setTotalPages(Math.ceil(response.totalHits / 12));
+        setError(null);
       } catch (error) {
-        this.setState({ error: error.message, isLoading: false });
+        setError(error.message);
+        setIsLoading(false);
       } finally {
-        this.setState({ isLoading: false });
+        setIsLoading(false);
       }
-    }
-  }
+    };
+    fetchData();
+  }, [searchText, page]);
 
-  handleSearch = searchText => {
-    this.setState({ searchText, page: 1, images: [] });
+  const handleSearch = searchText => {
+    setSearchText(searchText);  
+    setPage(1); 
+    setImages([]); 
   };
 
-  handleLoadMore = () => {
-    this.setState(prevState => ({ page: prevState.page + 1 }));
+  const handleLoadMore = () => {
+    setPage(prevPage => prevPage + 1);
   };
 
-  render() {
-    const { images, error, page, totalPages, isLoading } = this.state;
     const showLoadMoreButton = images.length !== 0 && page < totalPages;
     return (
       <div>
-        <Searchbar onSubmit={this.handleSearch} />
+        <Searchbar onSubmit={handleSearch} />
       {isLoading && <Loader />}
       <ImageGallery images={images} />
       {showLoadMoreButton && (
-        <Button onClick={this.handleLoadMore} disabled={isLoading}>
+        <Button onClick={handleLoadMore} disabled={isLoading}>
           {isLoading ? 'Loading...' : 'Load More'}
         </Button>
       )}
@@ -66,6 +66,6 @@ import { FetchGallery } from './servise/gallery-api';
       <ToastContainer autoClose={3000} /></div>
         
     );
-  }
+  
 }
 

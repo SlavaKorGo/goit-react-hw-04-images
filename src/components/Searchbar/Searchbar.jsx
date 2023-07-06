@@ -1,32 +1,28 @@
 
-import React from 'react';
+import React, {useState} from 'react';
 import { toast } from 'react-toastify';
 import { AiOutlineSearch } from 'react-icons/ai';
 import css from './Searchbar.module.css'
 
-export class Searchbar extends React.Component {
-  state = {
-    searchText: '',
-  };
+export function Searchbar ({onSubmit}) {
+  
+  const [searchText, setsearchText] = useState('')
 
-  handleChange = e => {
-    this.setState({ searchText: e.target.value.toLowerCase() });
-  };
-
-  handleSubmit = e => {
+  const handleChange = e => setsearchText(e.target.value.toLowerCase())
+   
+  const handleSubmit = e => {
     e.preventDefault();
-    if (this.state.searchText.trim() === '') {
+    if (searchText.trim() === '') {
       toast.error("Sorry, the search string can't be empty. Please try again.");
       return;
     }
-    this.props.onSubmit(this.state.searchText);
-    this.setState({ searchText: '' });
+    onSubmit(searchText);
+    setsearchText('');
   };
 
-  render() {
-    const { searchText } = this.state;
+  
     return (
-      <header className={css.Searchbar} onSubmit={this.handleSubmit}>
+      <header className={css.Searchbar} onSubmit={handleSubmit}>
   <form className={css.SearchForm}>
     <button type="submit" className={css.SearchFormButton}>
     <AiOutlineSearch />
@@ -39,13 +35,13 @@ export class Searchbar extends React.Component {
       autoComplete="off"
       autoFocus
       placeholder="Search images and photos"
-      onChange={this.handleChange}
+      onChange={handleChange}
       value={searchText}
     />
   </form>
 </header>
     );
-  }
+  
 }
 
 

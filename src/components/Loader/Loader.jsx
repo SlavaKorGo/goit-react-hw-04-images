@@ -3,8 +3,8 @@ import { ColorRing } from 'react-loader-spinner';
 
 export const Loader = () => {
 return (
-<di>
+<div>
     <ColorRing/>
-</di>
+</div>
 )
 }; 
