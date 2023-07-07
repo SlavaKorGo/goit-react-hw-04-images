@@ -1,9 +1,9 @@
 const BASE_URL = 'https://pixabay.com/api/';
 const API_KEY = '34927166-1b481bada704bd8d544084057';
 
-export async function FetchGallery({ searchText, page, perPage }) {
+export async function FetchGallery({ searchText, page}) {
   const response = await fetch(
-    `${BASE_URL}?q=${searchText}&page=${page}&key=${API_KEY}&image_type=photo&orientation=horizontal&per_page=${perPage}`
+    `${BASE_URL}?q=${searchText}&page=${page}&key=${API_KEY}&image_type=photo&orientation=horizontal&per_page= 12`
   );
   if (response.ok) {
     return response.json();
